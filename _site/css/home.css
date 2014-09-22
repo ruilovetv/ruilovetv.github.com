@@ -1,0 +1,184 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    font-family: STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif;
+    font-size: 18px;
+    margin-bottom: 60px;
+}
+
+a {
+    display: block;
+}
+
+.title {
+    cursor: pointer;
+}
+
+li.title:hover {
+    background-color: #eee;
+}
+
+.panel {
+    border-radius: 0;
+}
+
+.panel-default > .panel-heading {
+	background-image: none;
+	background-color: #fff;
+}
+
+.navbar-default {
+    --background-image: none;
+    background-color: #3592dd;
+    box-shadow: none;
+}
+
+
+.post {
+    margin: 10% 10% 10% 10%;
+    padding: 2% 5% 5% 5%;
+    --width: 50%;
+    line-height: 150%;
+    border: 1px solid LightGrey;
+}
+
+.post > H1 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+}
+
+.post > H2 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+    --margin-top: 60px;
+    margin-bottom: 40px;
+    padding: 5px;
+    border-bottom: 2px LightGrey solid;
+    width: 90%;
+    line-height: 150%;
+    color: #666666;
+}
+
+
+.post > H3 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    border-bottom: 1px LightGrey solid;
+    width: 80%;
+    line-height: 150%;
+    color: #666666;
+}
+
+
+.post > H4 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    border-bottom: 1px LightGrey solid;
+    width: 80%;
+    line-height: 150%;
+    color: #666666;
+}
+
+
+.post > li {
+    margin-left: 10px;
+}
+
+
+.post > blockquote {
+    border-left: 4px lightgrey solid;
+    padding-left: 5px;
+    margin-left: 20px;
+}
+
+
+.post > pre {
+    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
+    font-size: 75%;
+    border: solid 1px lightgrey;
+    background-color: Ivory;
+    padding: 5px;
+    line-height: 130%;
+    margin-left: 10px;
+    width: 95%;
+}
+
+
+.post > code {
+    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
+    font-size: 90%;
+}
+
+
+.post > a {
+    text-decoration: none;
+    cursor: crosshair;
+    border-bottom: 1px dashed Red;
+    padding: 1px;
+    color: black;
+}
+
+
+.post > a:hover {
+	background-color: LightGrey;
+}
+
+
+.post > img {
+    display: block;
+    box-shadow: 0 0 10px #555;
+	width: 100%;
+    border-radius: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    -webkit-box-shadow: 0 0 10px #555;
+}
+
+
+.post > hr {
+    color: LightGrey;
+}
+
+.navbar-default .navbar-nav>li>a {
+	color: #fff;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+	color: #000;
+}
+
+.navbar-default .navbar-nav>.active>a:hover {
+	color: #fff;
+	background-color: #3592dd;
+}
+
+.navbar-default .navbar-nav>.active>a {
+	color: #000;
+	background-color: #fff;
+}
+
+.navbar-default .navbar-brand {
+	color: #fff;
+}
+
+.navbar-default .navbar-brand:hover {
+	color: #000;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	color: #fff;
+	background-color: #3592dd;
+}
+
+.footer p {
+  margin: 20px 0;
+}
