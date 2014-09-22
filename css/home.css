@@ -182,3 +182,7 @@ li.title:hover {
 .footer p {
   margin: 20px 0;
 }
+
+.footer img {
+  width: 0px;
+}
