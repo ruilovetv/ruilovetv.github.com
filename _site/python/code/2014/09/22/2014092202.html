@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Ruilovetv Talk | 测试2</title>
+    <title>Ruilovetv Talk | Python 错误处理【'ascii' codec can't decode byte】</title>
     <!-- 新 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="/blog/css/bootstrap.min.css">
-    <link href="/blog/css/home.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link href="/css/home.css" rel="stylesheet">
   </head>
 
   <body>
@@ -25,17 +25,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/blog/">ruilovetv Talk</a>
+            <a class="navbar-brand" href="/">ruilovetv Talk</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/blog/talk">Talk</a></li>
-                <li><a href="/blog/python">Python</a></li>
-                <li><a href="/blog/sql">SQL</a></li>
-                <li><a href="/blog/code">Code</a></li>
-                <li class="active"><a href="/blog/">Blog</a></li>
+                <li><a href="/talk">Talk</a></li>
+                <li><a href="/python">Python</a></li>
+                <li><a href="/sql">SQL</a></li>
+                <li><a href="/code">Code</a></li>
+                <li class="active"><a href="/">Blog</a></li>
                 <li><a href="https://github.com/ruilovetv">Github</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
@@ -46,13 +46,37 @@
   <div class="row">  
   <div class="col-md-1"></div>
   <div class="col-md-10 col-sm-12 post">	 
-  <h2>测试2</h2>
+  <h2>Python 错误处理【'ascii' codec can't decode byte】 </h2>
 
-<p>（ruilovetv 版权所有，未经许可，请勿转载）</p>
+<p>（ruilovetv 版权所有，转载请附出处）</p>
 
-<img src="//image.tianjimedia.com/uploadImages/2012/180/S8VU063742HW.jpg">
+<p>出错提示，如下：</p>
+<pre>
+<code>
+'ascii' codec can't decode byte 0xe4 in position 0: ordinal not in range(128)
+</code>
+</pre>
 
-<p>这是一篇测试文章<p>
+<p>处理方法1：在代码首行增加如下代码</p>
+<pre>
+<code>
+import sys  
+reload(sys)  
+sys.setdefaultencoding('utf8')
+</code>
+</pre>
+<p>缺陷：导致无法显示print结果。</p>
+
+<p>处理方法2：在代码中找出转码出错的变量，添加.encode('utf-8')方法，并对在字符串前加u</p>
+<pre>
+<code>
+text = u"测试" + text
+file_object = open(file_name, 'w')
+file_object.write(text.encode('utf-8'))
+</code>
+</pre>
+
+<p>综合比较，推荐处理方法2。</p>
  
   </div>
   <div class="col-md-1"></div>
@@ -65,12 +89,18 @@
         <p>ruilovetv的学习记录。</p>
       </div>
     </div>
+	
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Ff6d583eb0948415d7e08e57e66a74d8d' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
   
   
   <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-  <script src="/blog/js/jquery.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
   <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-  <script src="/blog/js/bootstrap.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
   </body>
 </html>
 
