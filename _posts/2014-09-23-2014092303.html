@@ -1,0 +1,23 @@
+---
+layout: posts
+title: SQL 查询某个库中包含指定名字的数据列的所有表的名字
+categories: sql code
+---
+
+<h2>SQL 查询某个库中包含指定名字的数据列的所有表的名字</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>以下为查询中db1这个库中包含有col1这个数据列的所有数据表的名字。适合SQL Server系列数据库</p>
+<pre>
+<code>
+select tab.name 
+from db1..syscolumns as col
+inner join db1..sysobjects as tab on col.id=tab.id
+where col.name='col1'
+order by tab.name
+
+</code>
+</pre>
+
+ 

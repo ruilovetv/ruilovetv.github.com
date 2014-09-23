@@ -1,0 +1,29 @@
+---
+layout: posts
+title: Python 处理HTTP Error 302: Moved Temporarily - Redirection to url
+categories: python code
+---
+
+<h2>Python 处理HTTP Error 302: Moved Temporarily - Redirection to url</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>出现HTTP Error 302: Moved Temporarily - Redirection to url错误主要是因为链接有一个跳转。要获取这个跳转后的链接可以像如下代码这样处理：</p>
+<pre>
+<code>
+import urllib2    
+url = "a url has redirection“
+
+redirectionUrl = ""
+try:  
+    u=urllib2.urlopen(url)
+    redirectionUrl = u.geturl()
+except Exception,e:
+    redirectionUrl = e.url
+     
+print redirectionUrl 
+
+</code>
+</pre>
+
+ 
