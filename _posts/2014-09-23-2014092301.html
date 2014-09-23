@@ -1,0 +1,70 @@
+---
+layout: posts
+title: C# 注册表读写操作
+categories: csharp code
+---
+
+<h2>C# 注册表读写操作</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>参考代码如下：</p>
+<pre>
+<code>
+        /// <summary>
+        /// 获取注册表键值
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string getRegistData(string path, string keyName)
+        {
+            string registData = "";
+            try
+            {
+                RegistryKey hkml = Registry.CurrentUser;
+                RegistryKey software = hkml.OpenSubKey(path, true); 
+                registData = software.GetValue(keyName).ToString();
+            }
+            catch (Exception e)
+            {
+ 
+            }
+            return registData;
+        }
+
+        /// <summary>
+        /// 修改注册表键值
+        /// </summary>
+        /// <param name="keyName"></param>
+        /// <param name="keyValue"></param>
+        private void editKeyValue(string path, string keyName, string keyValue)
+        {
+            RegistryKey hkml = Registry.CurrentUser;
+            RegistryKey software = hkml.OpenSubKey(path, true); 
+            software.SetValue(keyName, keyValue);
+            hkml.Close();
+        }
+
+        /// <summary>
+        /// 创建注册表项
+        /// </summary>
+        /// <param name="path">注册表路经</param>
+        /// <returns>返回结果</returns>
+        public bool CreateItemRegEdit(string path)
+        {
+            try
+            {
+                RegistryKey hkml = Registry.CurrentUser;
+                hkml.CreateSubKey(path);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+</code>
+</pre>
+
+ 
