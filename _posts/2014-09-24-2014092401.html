@@ -1,0 +1,56 @@
+---
+layout: posts
+title: C# SqlParameter的使用
+categories: csharp code
+---
+
+<h2>C# SqlParameter的使用</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>参考代码如下：</p>
+<pre>
+<code>
+
+
+        /// <summary>
+        /// 执行查询语句
+        /// </summary>
+        /// <param name="sql">语句</param>
+        /// <param name="sps">参数</param>
+        /// <returns>数据表</returns>
+        public DataTable execQuery(string sql, SqlParameter[] sps)
+        {
+            SqlCommand sqlCommand;
+            DataTable dataTable = null;
+            SqlConnection sqlConnection = new SqlConnection(ConnStr);
+            try
+            {
+                sqlConnection.Open();
+                sqlCommand = sqlConnection.CreateCommand();
+                sqlCommand.CommandType = CommandType.Text;
+                sqlCommand.CommandText = sql;
+                sqlCommand.Parameters.AddRange(sps);
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                dataTable = new DataTable("table");
+                sqlDataAdapter.Fill(dataTable);
+                sqlConnection.Close();
+            }
+            catch (Exception)
+            {
+                sqlConnection.Close();
+            }
+            return dataTable;
+        }
+		
+        /// 测试代码
+        SqlParameter[] sps = new SqlParameter[] {
+                new SqlParameter("@p1", "测试数据1"),
+                new SqlParameter("@p2", "测试数据2")
+            };
+		string sql = "select * from table where p1 = @p1 and p2 = @p2"
+        execQuery(sql, sps);
+</code>
+</pre>
+
+ 
