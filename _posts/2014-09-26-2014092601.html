@@ -1,0 +1,92 @@
+---
+layout: posts
+title: C# 将DataTable导出Excel的两种方法
+categories: csharp code
+---
+
+<h2>C# 将DataTable导出Excel的两种方法</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>参考代码如下（参考代码来源自网络，略做修改），个人建议导出成csv：</p>
+<pre>
+<code>
+
+
+        /// <summary>
+        /// 将DataTable导出成CSV文件（无需安装excel）
+        /// </summary>
+        /// <param name="table">数据表</param>
+        /// <param name="file">导出后的完整文件路径（包括文件名）</param>
+        private void dataTableToCsv(System.Data.DataTable table, string file)
+        {
+
+            string title = "";
+            FileStream fs = new FileStream(file, FileMode.OpenOrCreate);
+            //FileStream fs1 = File.Open(file, FileMode.Open, FileAccess.Read);
+            StreamWriter sw = new StreamWriter(new BufferedStream(fs), System.Text.Encoding.Default);
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+                title += table.Columns[i].ColumnName + "\t"; //栏位：自动跳到下一单元格
+            }
+            title = title.Substring(0, title.Length - 1) + "\n";
+            sw.Write(title);
+            foreach (DataRow row in table.Rows)
+            {
+                string line = "";
+                for (int i = 0; i < table.Columns.Count; i++)
+                {
+                    line += row[i].ToString().Trim() + "\t"; //内容：自动跳到下一单元格
+                }
+                line = line.Substring(0, line.Length - 1) + "\n";
+                sw.Write(line);
+            }
+            sw.Close();
+            fs.Close();
+        }
+
+
+        /// <summary>
+        /// 将DataTable中的列名及数据导出到Excel表中（需安装excel）
+        /// </summary>
+        /// <param name="tmpDataTable">要导出的DataTable</param>
+        /// <param name="strFileName">Excel的保存路径及名称</param>
+        public static void DataTabletoExcel(System.Data.DataTable tmpDataTable, string strFileName)
+        {
+            if (tmpDataTable == null)
+                return;
+            int rowNum = tmpDataTable.Rows.Count;
+            int columnNum = tmpDataTable.Columns.Count;
+            int rowIndex = 1;
+            int columnIndex = 0;
+            Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+            xlApp.DefaultFilePath = "";
+            xlApp.DisplayAlerts = true;
+            xlApp.SheetsInNewWorkbook = 1;
+            Microsoft.Office.Interop.Excel.Workbook xlBook = xlApp.Workbooks.Add(true);
+
+            //将DataTable的列名导入Excel表第一行
+            foreach (DataColumn dc in tmpDataTable.Columns)
+            {
+                columnIndex++;
+                xlApp.Cells[rowIndex, columnIndex] = dc.ColumnName;
+            }
+
+            //将DataTable中的数据导入Excel中
+            for (int i = 0; i < rowNum; i++)
+            {
+                rowIndex++;
+                columnIndex = 0;
+                for (int j = 0; j < columnNum; j++)
+                {
+                    columnIndex++;
+                    xlApp.Cells[rowIndex, columnIndex] = tmpDataTable.Rows[i][j].ToString();
+                }
+            }
+            xlBook.SaveCopyAs(strFileName);
+        }
+
+</code>
+</pre>
+
+ 
