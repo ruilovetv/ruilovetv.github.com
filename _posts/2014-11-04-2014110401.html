@@ -1,0 +1,62 @@
+---
+layout: posts
+title: C# 使用讯飞语音云
+categories: csharp code
+---
+
+<h2>C# 使用讯飞语音云</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>最近做一个小工具，需要用到文字合成语音，术语叫做TTS，微软有提供Speech SDK，但是中文效果并不太好。中文语音目前做得最好的应该是科大讯飞。下面提供C#调用科大语音云的相关资料。
+<li>参考代码的论坛链接为：http://club.voicecloud.cn/forum.php?mod=viewthread&tid=9004</li>
+<li>参考github链接为：https://github.com/mojifan/iflytek-csharp-demo</li>
+</p> 
+<p>简单演示代码如下：</p> 
+<pre>
+<code>
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+using iFlyDotNet;
+using NAudio.Wave;
+using Microsoft.DirectX.DirectSound;
+namespace 讯飞TTS测试
+{
+    public partial class Form1 : Form
+    {
+        bool luyin = true;
+        WaveInStream wi;
+        private WaveFileWriter writer;
+        iFlyISR isr;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        void tts_Finished(object sender, iFlyTTS.JinDuEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.AllP.ToString());
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            string text = "这是测试语音";
+            string c1 = "appid=4e9d1fa5";
+            iFlyTTS tts = new iFlyTTS(c1);
+            tts.Finished += tts_Finished;
+            tts.vol = enuVol.x_loud;
+            tts.speed = enuSpeed.medium;
+            tts.speeker = (enuSpeeker)5;
+            tts.MultiSpeek(text, "audio.wav");
+            System.Media.SoundPlayer sp = new System.Media.SoundPlayer("audio.wav");
+            sp.Play();
+        
+        }
+    }
+}
+</code></pre>
