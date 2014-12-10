@@ -1,0 +1,124 @@
+---
+layout: posts
+title: 一些C# winform的开发心得
+categories: csharp code 泊松分布 MDI winform
+---
+
+<h2>一些C# winform的开发心得</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>最近心血来潮，打算用概率论做一些小玩意儿，用到了泊松分布。</p>
+
+<code>
+    public class PoissonEvaluator
+    {
+        decimal lambda;//均值
+
+        public PoissonEvaluator(decimal lambda = 1.0M)
+        {
+            this.lambda = lambda;
+        }
+
+        public decimal ProbabilityMassFunction(int k)//求出现k的概率
+        {
+            //(l^k / k! ) * e^-l
+            //l = lamda
+            int kFactorial = Factorial(k);
+            double numerator = Math.Pow(Math.E, -(double)lambda) * Math.Pow((double)lambda, (double)k);
+
+            decimal p = (decimal)numerator / kFactorial;
+            return p;
+        }
+
+        public decimal CummulitiveDistributionFunction(int k)//求出现不大于k的概率
+        {
+            double e = Math.Pow(Math.E, (double)-lambda);
+            int i = 0;
+            double sum = 0.0;
+            while (i <= k)
+            {
+                double n = Math.Pow((double)lambda, i) / Factorial(i);
+                sum += n;
+                i++;
+            }
+            decimal cdf = (decimal)e * (decimal)sum;
+            return cdf;
+        }
+
+        private int Factorial(int k)
+        {
+            int count = k;
+            int factorial = 1;
+            while (count >= 1)
+            {
+                factorial = factorial * count;
+                count--;
+            }
+            return factorial;
+        }
+    }
+</code>
+
+<p>使用MDI多窗口编程，使子窗口最大化的方法：</p>
+<code>
+
+			private FormChild fChild;
+		
+            if (fChild == null || fChild.IsDisposed)
+            {
+                fChild = new FormChildS();
+                fChild.MdiParent = this;
+                fChild.FormBorderStyle = FormBorderStyle.None;
+                fChild.ControlBox = false;
+                fChild.MinimizeBox = false;
+                fChild.MaximizeBox = false;
+
+                fChild.Dock = DockStyle.Fill;
+                fChild.Show();
+            }
+            else
+            {      
+                fChild.Dock = DockStyle.Fill;
+                fChild.Activate();
+            }
+</code>
+
+<p>C# 批量处理SQLite中的数据</p>
+<code>
+        public int InsertDataFromDataTable(System.Data.DataTable dt)
+        {
+            int result = 0;
+            SQLiteConnection conn = new SQLiteConnection(this.dbPath);
+            conn.Open();
+
+            SQLiteCommand cmd = new SQLiteCommand(conn);//实例化SQL命令 
+            SQLiteTransaction tran = conn.BeginTransaction();
+            cmd.Transaction = tran;
+            try
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    System.Data.DataRow dr = dt.Rows[i];
+                    cmd.Parameters.Clear();
+                    cmd.CommandText = @"Insert into table1(col1,col2)
+                        select 
+                        @col1, @col2";//设置带参SQL语句  ; 
+                    cmd.Parameters.AddRange(
+                            new[] {//添加参数  
+                                new SQLiteParameter("@col1", dr["col1"].ToString()),
+                                new SQLiteParameter("@col2", dr["col2"].ToString()) 
+                                });
+                    result += cmd.ExecuteNonQuery();//执行 
+                }
+                tran.Commit();//提交  
+            }
+            catch (Exception)
+            {
+                tran.Rollback();
+            }
+            conn.Close();
+
+            return result;
+        }
+</code>
