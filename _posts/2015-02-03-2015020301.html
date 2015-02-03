@@ -1,0 +1,196 @@
+---
+layout: posts
+title: 近期C#  winform开发小经验
+categories: csharp 
+---
+
+<h2>近期C#  winform开发小经验</h2>
+
+<p>（ruilovetv 版权所有，转载请附出处）</p>
+
+<p>最近尝试用webBrowser控件，做一些小应用。</p>
+<p>下面这个是一个完整的form的代码，就一个控件名叫webBrowser1的webBrowser控件，供其他程序调用，假设只需要设置一个cookie值。故用一个字符串保存cookie的名称，一个字符串保存该cookie的值。主要关键部分有两个，一个是设置cookie，一个是newWindow的处理。在一开始试验的过程中，加载cookie的问题得到解决，但是，点击webBrowser控件中的链接，有些是新建窗口的，则会弹出IE窗口，而且，伴随的是cookie没有带过去。现在则处理为新建一个同样的form，把网址和cookie带过去。</p>
+<p>另外，设置cookie的第一个参数是网站的域名地址，要记得带http或者https头</p>
+<pre>
+<code>
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+using System.Net;
+using System.IO;
+using System.Web;
+
+public partial class FormWeb : Form
+    {
+        private string formCookieName;
+        private string formCookieValue;
+        public FormWeb()
+        {
+            InitializeComponent();
+        }
+
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData);  
+  
+        public void SetWeb(string url, string cookieName, string cookieValue)
+        {
+            // set cookie  
+            InternetSetCookie("https://google.com", cookieName, cookieValue);
+
+            formCookieName = cookieName;
+            formCookieValue = cookieValue;
+            // navigate  
+            webBrowser1.Navigate(url);  
+        }
+
+        private void webBrowser1_NewWindow(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;//取消弹出IE窗口
+            FormWeb fwNew = new FormWeb();//新建一个Form
+            string url = this.webBrowser1.Document.ActiveElement.GetAttribute("href");//获取激活的url
+            fwNew.SetWeb(url, formCookieName, formCookieValue);//加载URL
+            fwNew.Show();//弹出新窗口
+        }
+        
+    }
+</code>
+</pre> 
+
+<p>下面是模拟POST和GET的代码，来自互联网，具体地址忘记了，对原创人说声抱歉。</p>
+<pre>
+<code>
+		/// </summary>
+        /// RequestUrl: request some url, return the response.
+        /// 适合方式:POST/GET
+        /// </summary>
+        /// <param name="strUrl">the url</param>
+        /// <param name="strPostDatas">the post data</param>
+        /// <param name="method">发送方式："POST"或"GET"</param>
+        /// <param name="objencoding">编码方式("utf-8")</param>
+        /// <param name="objCookieContainer">cookie's(session's) container</param>
+        /// <param name="rescookie">返回string类型的cookie</param>
+        /// <param name="flag">flag = false 直接发送 不分割 （默认）</param>
+        /// <returns>返回HTML页面</returns>
+        public string RequestUrl(string strUrl, string strPostDatas, string method, string objencoding, ref CookieContainer objCookieContainer, bool flag, ref string rescookie)
+        {
+            HttpWebResponse res = null;
+            string strResponse = "";
+            //string strcookie = "";
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
+                req.Method = method;
+                req.KeepAlive = true;
+                req.ContentType = "application/x-www-form-urlencoded";
+                //req.Timeout = 20; 
+
+              
+                //req.Headers.Add("X-MicrosoftAjax", "Delta=true");
+                //req.Headers.Add("X-Requested-With", "XMLHttpRequest");
+                //req.Headers.Add("Accept", "*/*");
+                //req.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
+                //req.Headers.Add("Accept-Language", "zh-CN,zh;q=0.8");
+                //req.UserAgent = "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36";
+               
+             
+                if (objCookieContainer == null)
+                    objCookieContainer = new CookieContainer();
+                req.CookieContainer = objCookieContainer;
+
+                StringBuilder objEncodedPostDatas = new StringBuilder();
+                byte[] postDatas = null;
+                ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(CheckValidationResult);//
+                req.ContentLength = 0;
+                #region SendData
+                if (strPostDatas != null && strPostDatas.Length > 0)
+                {
+                    if (flag == true)
+                    {
+                        string[] datas = strPostDatas.TrimStart('?').Split(new char[] { '&' });
+                        for (int i = 0; i < datas.Length; i++)
+                        {
+                            string[] keyValue = datas[i].Split(new char[] { '=' });
+                            if (keyValue.Length >= 2)
+                            {
+                                objEncodedPostDatas.Append(System.Web.HttpUtility.UrlEncode(keyValue[0]));
+                                objEncodedPostDatas.Append("=");
+                                objEncodedPostDatas.Append(System.Web.HttpUtility.UrlEncode(keyValue[1]));
+                                if (i < datas.Length - 1)
+                                {
+                                    objEncodedPostDatas.Append("&");
+                                }
+                            }
+                        }
+                        //postDatas = Encoding.UTF8.GetBytes(objEncodedPostDatas.ToString());
+                        postDatas = Encoding.GetEncoding(objencoding.Trim()).GetBytes(objEncodedPostDatas.ToString());
+                    }
+                    else
+                    {
+                        //postDatas = Encoding.UTF8.GetBytes(strPostDatas);
+                        postDatas = Encoding.GetEncoding(objencoding.Trim()).GetBytes(strPostDatas);
+                    }
+
+
+                    req.ContentLength = postDatas.Length;
+                    using (Stream reqStream = req.GetRequestStream())
+                    {
+                        reqStream.Write(postDatas, 0, postDatas.Length);
+                    }
+                }
+                #endregion
+                res = (HttpWebResponse)req.GetResponse();
+                 
+                objCookieContainer = req.CookieContainer;
+                CookieCollection mycookie = objCookieContainer.GetCookies(req.RequestUri);
+                foreach (Cookie cook in mycookie)
+                {
+                    rescookie = cook.Name + "=" + cook.Value;
+                }
+
+                 
+                using (Stream resStream = res.GetResponseStream())
+                {
+                    using (StreamReader sr = new StreamReader(resStream, System.Text.Encoding.GetEncoding(objencoding.Trim())))
+                    {
+                        strResponse = sr.ReadToEnd();
+                    }
+                } 
+            }
+            //catch (Exception ex)
+            //{
+            //    strResponse = ex.ToString();
+            //}  
+            finally
+            {
+                if (res != null)
+                {
+                    res.Close();
+                }
+            }
+            return strResponse;
+        }
+
+</code>
+</pre>
+
+
+<p>简单的模拟post的操作，下面是代码举例。</p>
+<pre>
+	<code>
+    string url = "";//网址
+	CookieContainer mycookie = new CookieContainer();//cookie容器
+    mycookie.Add(new Cookie(cookieName, cookieValue, "", urlDomain));//加载url
+	string rescookie = "";//装cookie的内容
+	string data0 = "参数0";//假设要post的参数
+	string data1 = "参数1";//假设要post的参数
+	string postDataFormat = "data0={0}&data1={1}";//构建post的数据
+	string postData = string.Format(postDataFormat, System.Web.HttpUtility.UrlEncode(data0), System.Web.HttpUtility.UrlEncode(data1));//构建post的数据
+	html = RequestUrl(url, postData, "POST", "utf-8", ref mycookie, false, ref rescookie);//获取post返回的内容，返回的cookie
+               
+	</code>
+</pre>
